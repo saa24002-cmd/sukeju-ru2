@@ -5,7 +5,332 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>マイスケジュール</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --primary: #1976d2;
+      --primary-hover: #115293;
+      --bg: #f0f4f8;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-light: #64748b;
+      --border: #dce4ec;
+      --danger: #d32f2f;
+      --success: #2e7d32;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: #fff;
+      padding: 0.8rem 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .user-info img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--bg);
+      padding-bottom: 0.4rem;
+    }
+
+    .login-card {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .login-card p {
+      margin: 1rem 0 1.8rem;
+      color: var(--text-light);
+    }
+
+    .form-group {
+      margin-bottom: 0.9rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 500px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid currentColor;
+      color: inherit;
+    }
+
+    header .btn-outline {
+      color: #fff;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-edit {
+      background-color: #e3f2fd;
+      color: var(--primary);
+    }
+
+    .btn-delete {
+      background-color: #ffebee;
+      color: var(--danger);
+    }
+
+    .list-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--bg);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .list-header-row h2 {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .filter-btn {
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--text-light);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      font-weight: bold;
+    }
+
+    .schedule-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .schedule-item {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      padding: 0.9rem;
+      background: #fafafa;
+    }
+
+    .schedule-item.completed {
+      border-left-color: var(--success);
+      background: #f1f8f1;
+      opacity: 0.8;
+    }
+
+    .schedule-item.completed .schedule-title {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+
+    .schedule-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .complete-check {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--success);
+    }
+
+    .schedule-title {
+      font-weight: bold;
+      font-size: 1.05rem;
+    }
+
+    .category-badge {
+      background: #e3f2fd;
+      color: var(--primary-hover);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: bold;
+    }
+
+    .schedule-datetime {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .schedule-memo {
+      font-size: 0.92rem;
+      margin: 0.4rem 0;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .schedule-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .schedule-actions {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .empty-msg {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -29,7 +354,6 @@
 
     <!-- ログイン後メイン画面 -->
     <div id="app-section" class="hidden">
-      <!-- 予定登録・編集フォーム -->
       <section class="card">
         <h2 id="form-title">✏️ 新しい予定を追加</h2>
         <form id="schedule-form">
@@ -68,7 +392,6 @@
         </form>
       </section>
 
-      <!-- 自分の予定一覧 -->
       <section class="card">
         <div class="list-header-row">
           <h2>📋 予定一覧（<span id="my-count">0</span>件）</h2>
@@ -85,6 +408,294 @@
     </div>
   </main>
 
-  <script type="module" src="app.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      doc,
+      query,
+      where,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAG6FL2hUvcecTgGgxRTdj71VU_PPbxUZY",
+      authDomain: "sukeju-ru-1bae9.firebaseapp.com",
+      projectId: "sukeju-ru-1bae9",
+      storageBucket: "sukeju-ru-1bae9.firebasestorage.app",
+      messagingSenderId: "691416091911",
+      appId: "1:691416091911:web:6007ac477b6300926309a2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginSection = document.getElementById("login-section");
+    const appSection = document.getElementById("app-section");
+    const userInfo = document.getElementById("user-info");
+    const userPhoto = document.getElementById("user-photo");
+    const userName = document.getElementById("user-name");
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    const scheduleForm = document.getElementById("schedule-form");
+    const formTitle = document.getElementById("form-title");
+    const editIdInput = document.getElementById("edit-id");
+    const titleInput = document.getElementById("title");
+    const dateInput = document.getElementById("date");
+    const timeInput = document.getElementById("time");
+    const categoryInput = document.getElementById("category");
+    const memoInput = document.getElementById("memo");
+    const submitBtn = document.getElementById("submit-btn");
+    const cancelEditBtn = document.getElementById("cancel-edit-btn");
+
+    const mySchedulesList = document.getElementById("my-schedules-list");
+    const myCountSpan = document.getElementById("my-count");
+    const filterBtns = document.querySelectorAll(".filter-btn");
+
+    let currentUser = null;
+    let unsubscribeSchedules = null;
+    let mySchedulesCache = [];
+    let currentFilter = "all";
+
+    dateInput.valueAsDate = new Date();
+    userPhoto.onerror = () => userPhoto.classList.add("hidden");
+
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (error) {
+        console.error("ログインエラー:", error);
+        alert("ログインに失敗しました。\n" + error.message);
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("ログアウトエラー:", error);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        loginSection.classList.add("hidden");
+        appSection.classList.remove("hidden");
+        userInfo.classList.remove("hidden");
+        userName.textContent = user.displayName || "ユーザー";
+
+        if (user.photoURL) {
+          userPhoto.src = user.photoURL;
+          userPhoto.classList.remove("hidden");
+        } else {
+          userPhoto.classList.add("hidden");
+        }
+
+        subscribeToMySchedules(user.uid);
+      } else {
+        loginSection.classList.remove("hidden");
+        appSection.classList.add("hidden");
+        userInfo.classList.add("hidden");
+        if (unsubscribeSchedules) unsubscribeSchedules();
+      }
+    });
+
+    filterBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.filter;
+        renderMySchedules(mySchedulesCache);
+      });
+    });
+
+    scheduleForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const title = titleInput.value.trim();
+      const date = dateInput.value;
+      const time = timeInput.value;
+      const category = categoryInput.value;
+      const memo = memoInput.value.trim();
+      const editId = editIdInput.value;
+
+      submitBtn.disabled = true;
+
+      try {
+        if (editId) {
+          const docRef = doc(db, "schedules", editId);
+          await updateDoc(docRef, {
+            title,
+            date,
+            time,
+            category,
+            memo,
+            updatedAt: serverTimestamp()
+          });
+          resetForm();
+        } else {
+          await addDoc(collection(db, "schedules"), {
+            uid: currentUser.uid,
+            title,
+            date,
+            time,
+            category,
+            memo,
+            isCompleted: false,
+            createdAt: serverTimestamp()
+          });
+          resetForm();
+        }
+      } catch (error) {
+        console.error("保存エラー:", error);
+        alert("データの保存に失敗しました。\n" + error.message);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    cancelEditBtn.addEventListener("click", resetForm);
+
+    function resetForm() {
+      editIdInput.value = "";
+      titleInput.value = "";
+      dateInput.valueAsDate = new Date();
+      timeInput.value = "";
+      categoryInput.value = "勉強・課題";
+      memoInput.value = "";
+      formTitle.textContent = "✏️ 新しい予定を追加";
+      submitBtn.textContent = "予定を保存する";
+      cancelEditBtn.classList.add("hidden");
+    }
+
+    function subscribeToMySchedules(uid) {
+      const q = query(collection(db, "schedules"), where("uid", "==", uid));
+
+      unsubscribeSchedules = onSnapshot(q, (snapshot) => {
+        const items = [];
+        snapshot.forEach((docSnap) => {
+          items.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        mySchedulesCache = items;
+        renderMySchedules(items);
+      }, (error) => {
+        console.error("データ取得エラー:", error);
+        mySchedulesList.innerHTML = `<p class="empty-msg">データの読み込みに失敗しました（Firestoreのルールを確認してください）</p>`;
+      });
+    }
+
+    function renderMySchedules(items) {
+      let filteredItems = [...items].sort((a, b) => {
+        const dtA = `${a.date} ${a.time || "23:59"}`;
+        const dtB = `${b.date} ${b.time || "23:59"}`;
+        return dtA.localeCompare(dtB);
+      });
+
+      if (currentFilter === "active") {
+        filteredItems = filteredItems.filter((item) => !item.isCompleted);
+      } else if (currentFilter === "completed") {
+        filteredItems = filteredItems.filter((item) => item.isCompleted);
+      }
+
+      myCountSpan.textContent = filteredItems.length;
+
+      if (filteredItems.length === 0) {
+        mySchedulesList.innerHTML = `<p class="empty-msg">表示する予定がありません。</p>`;
+        return;
+      }
+
+      mySchedulesList.innerHTML = "";
+      filteredItems.forEach((item) => {
+        const el = document.createElement("div");
+        el.className = `schedule-item ${item.isCompleted ? "completed" : ""}`;
+        const timeText = item.time ? ` ${item.time}` : "";
+
+        el.innerHTML = `
+          <div class="schedule-header">
+            <div class="title-wrap">
+              <input type="checkbox" class="complete-check" ${item.isCompleted ? "checked" : ""} title="完了にする">
+              <span class="schedule-title">${escapeHTML(item.title)}</span>
+              <span class="category-badge">${escapeHTML(item.category)}</span>
+            </div>
+            <span class="schedule-datetime">🗓 ${escapeHTML(item.date)}${escapeHTML(timeText)}</span>
+          </div>
+          ${item.memo ? `<p class="schedule-memo">${escapeHTML(item.memo)}</p>` : ""}
+          <div class="schedule-footer">
+            <span>${item.isCompleted ? "✅ 完了済み" : "⏳ 予定中"}</span>
+            <div class="schedule-actions">
+              <button class="btn btn-sm btn-edit">編集</button>
+              <button class="btn btn-sm btn-delete">削除</button>
+            </div>
+          </div>
+        `;
+
+        el.querySelector(".complete-check").addEventListener("change", async (e) => {
+          try {
+            await updateDoc(doc(db, "schedules", item.id), {
+              isCompleted: e.target.checked
+            });
+          } catch (error) {
+            alert("更新に失敗しました: " + error.message);
+          }
+        });
+
+        el.querySelector(".btn-edit").addEventListener("click", () => {
+          editIdInput.value = item.id;
+          titleInput.value = item.title;
+          dateInput.value = item.date;
+          timeInput.value = item.time || "";
+          categoryInput.value = item.category;
+          memoInput.value = item.memo || "";
+          formTitle.textContent = "✏️ 予定を編集する";
+          submitBtn.textContent = "更新を保存する";
+          cancelEditBtn.classList.remove("hidden");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        el.querySelector(".btn-delete").addEventListener("click", async () => {
+          if (confirm(`「${item.title}」を削除しますか？`)) {
+            try {
+              await deleteDoc(doc(db, "schedules", item.id));
+            } catch (error) {
+              alert("削除に失敗しました: " + error.message);
+            }
+          }
+        });
+
+        mySchedulesList.appendChild(el);
+      });
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str.replace(/[&<>"']/g, (match) => {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        };
+        return map[match];
+      });
+    }
+  </script>
 </body>
 </html>
